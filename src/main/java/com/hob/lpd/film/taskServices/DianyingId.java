@@ -35,12 +35,12 @@ public class DianyingId implements IService {
     @Autowired
     private OkHttpUtils okHttpUtils;
 
-    String baseIdUrl = "http://www.btbtt88.com/forum-index-fid-1-page-";
-    String baseContentUrl = "http://www.btbtt88.com/thread-index-fid-1-tid-";
-    String downBaseUrl = "http://www.btbtt88.com/attach-download-fid-1-aid-";
+    String baseIdUrl = "http://www.btbtt66.com/forum-index-fid-1-page-";
+    String baseContentUrl = "http://www.btbtt66.com/thread-index-fid-1-tid-";
+    String downBaseUrl = "http://www.btbtt66.com/attach-download-fid-1-aid-";
     String suffix = ".htm";
 
-    String vipbaseUrl = "http://www.btbtt88.com/forum-index-fid-9-page-";
+    String vipbaseUrl = "http://www.btbtt66.com/forum-index-fid-9-page-";
     public void process() {
         for(int i = 1; i <= 2; i++){
             System.out.println("第" + i + "页 start...");
