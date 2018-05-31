@@ -68,7 +68,7 @@
             </activation>
             <properties>
                 <db.url>jdbc:mysql://localhost:3306/liwei</db.url>
-                <db.user>root</db.user>
+                <db.user>xiaowei</db.user>
                 <db.pass>xiaowei</db.pass>
                 <logLevel>INFO</logLevel>
             </properties>

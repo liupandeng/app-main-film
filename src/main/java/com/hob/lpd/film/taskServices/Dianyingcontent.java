@@ -1684,25 +1684,44 @@ public class Dianyingcontent{
             "</html>\n";
     public static void main(String[] args) {
         Document doc = Jsoup.parse(content);
-        Elements elementsTag = doc.getElementsByTag("p");
-        Elements elementsImg = doc.getElementsByTag("img");
+        Elements elementsImg = doc.getElementsByClass("ajaxdialog_hover");
+        String name = elementsImg.attr("aria-label");
+        Elements elementsUrl = doc.getElementsByClass("avatar_middle");
+        String url = elementsUrl.attr("style");
+        url = url.substring(url.indexOf("(")+1, url.indexOf(")"));
+        System.out.println(name.substring(0,name.indexOf(" ")));
+        System.out.println(url);
 
-        Iterator itTag =  elementsTag.iterator();
-        Iterator itImg =  elementsImg.iterator();
-        String a = "";
-        while(itTag.hasNext()){
-            Element element = (Element)itTag.next();
-            a += element.text().toString() + "|";
-        }
 
-        String b = "";
-        while(itImg.hasNext()){
-            Element element = (Element)itImg.next();
-            b += element.attr("src")+ "|";
-        }
-        System.out.println(a);
-        System.out.println("=========================");
-        System.out.println(b);
+
+
+
+
+
+
+
+
+
+
+
+
+
+//        Iterator itTag =  elementsTag.iterator();
+//        Iterator itImg =  elementsImg.iterator();
+//        String a = "";
+//        while(itTag.hasNext()){
+//            Element element = (Element)itTag.next();
+//            a += element.text().toString() + "|";
+//        }
+//
+//        String b = "";
+//        while(itImg.hasNext()){
+//            Element element = (Element)itImg.next();
+//            b += element.attr("src")+ "|";
+//        }
+//        System.out.println(a);
+//        System.out.println("=========================");
+//        System.out.println(b);
     }
 
 
