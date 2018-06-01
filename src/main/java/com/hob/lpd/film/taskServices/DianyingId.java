@@ -250,7 +250,9 @@ public class DianyingId implements IService {
             boolean isExist = dianyingContentDao.rawQueryForInt("select count(*) from dianying_content where film_id = ?", new String[]{filmId}) > 0 ? true : false;
             if(!isExist){
                 int result = dianyingContentDao.insert(temp);
-                logger.info("新增电影content!!!result: "+ result +" ==film_id ==" + filmId);
+                if(result < 1){
+                    logger.info("新增电影content!!!result: "+ result +" ==film_id ==" + filmId);
+                }
             }
         });
     }
@@ -263,10 +265,11 @@ public class DianyingId implements IService {
             if(!isExist){
                 int result = dianyingIdDao.insert(temp);
                 String isSuccess = result > 0 ? "==成功！！！" : "==失败！！！";
-                logger.info("新增电影id ==" + filmId + isSuccess);
                 if(result > 0){
                     List<Map<String, String>> contentList = getContentDoc(filmId);
                     insertFilmContent(contentList);
+                }else {
+                    logger.info("新增电影id ==" + filmId + isSuccess);
                 }
             }
         });
