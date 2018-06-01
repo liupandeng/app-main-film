@@ -6,6 +6,7 @@ import com.dream.common.utils.DateUtils;
 import com.dream.common.utils.StringUtils;
 import com.dream.common.utils.okhttp.OkHttpUtils;
 import org.apache.log4j.Logger;
+import org.aspectj.lang.annotation.Around;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -31,6 +32,9 @@ public class DianyingId implements IService {
     private BaseDictDao dianyingIdDao;
     @Autowired
     private BaseDictDao dianyingContentDao;
+    @Autowired
+    private BaseDictDao fakeUserDao;
+
 
     @Autowired
     private OkHttpUtils okHttpUtils;
@@ -42,9 +46,14 @@ public class DianyingId implements IService {
 
     String vipbaseUrl = "http://www.btbtt66.com/forum-index-fid-9-page-";
     public void process() {
-        for(int i = 1; i <= 2; i++){
+        for(int i = 1; i <= 324; i++){
             System.out.println("第" + i + "页 start...");
             operate(i,baseIdUrl);
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             System.out.println("第" + i + "页 end...");
         }
     }
@@ -100,8 +109,7 @@ public class DianyingId implements IService {
             Map<String, String> coverMap = getCover(elementsImg);
             data.putAll(coverMap == null ? new HashMap<>() : coverMap);
             // 获取发布用户的昵称和头像
-            Map<String, String> userMap = getPublicUser(content);
-            data.putAll(userMap);
+            getPublicUser(content);
             // 获取简介，演员等信息
             String intro = getIntro(elementsTag);
             data.put("content_text", StringUtils.isEmpty(intro) ? "" : intro);
@@ -118,17 +126,37 @@ public class DianyingId implements IService {
         return list;
     }
 
-    public Map<String, String> getPublicUser(String content){
+    /**获取伪造用户昵称和头像*/
+    public int getPublicUser(String content){
         Document doc = Jsoup.parse(content);
-        Elements elementsImg = doc.getElementsByClass("ajaxdialog_hover");
-        String name = elementsImg.attr("aria-label");
+        Elements elementsName = doc.getElementsByClass("ajaxdialog_hover");
         Elements elementsUrl = doc.getElementsByClass("avatar_middle");
-        String url = elementsUrl.attr("style");
-        url = url.substring(url.indexOf("(") + 1, url.indexOf(")"));
-        Map<String, String> data = new HashMap<>();
-        data.put("user_name", name);
-        data.put("head_img", url);
-        return data;
+        if(elementsName.size() ==0){
+            logger.info("页面不存在user信息");
+            return 0;
+        }
+        elementsName.forEach(e ->{
+            Map<String, String> data = new HashMap<>();
+            String name = StringUtils.isEmpty(elementsName.attr("aria-label")) ? " " : elementsName.attr("aria-label");
+            if(name.length() < 2){
+                return;
+            }
+            name = name.substring(0, name.indexOf(" "));
+            String url = elementsUrl.attr("style");
+            if(!url.contains("(")){
+                return;
+            }
+            url = url.substring(url.indexOf("(") + 1, url.indexOf(")"));
+            data.put("name", name);
+            data.put("head_img", url);
+            if(!StringUtils.isEmpty(name) && !StringUtils.isEmpty(url)){
+                int result  = fakeUserDao.insert(data);
+                String isSuccess = result > 1 ? "成功" : "失败";
+                logger.info("insert user " + isSuccess);
+
+            }
+        });
+        return 1;
     }
 
 
@@ -151,15 +179,23 @@ public class DianyingId implements IService {
                 int start = urlArr.indexOf("attach-dialog-fid-1-aid-") +24;
                 int end = urlArr.indexOf("-ajax-1.htm");
                 String realDownUrl = downBaseUrl+ urlArr.substring(start,end) + suffix;
-                String desc = title.length >= 9 ? title[8] : "";
+                int titleLength = title.length;
+                String type = titleLength >= 3 ? title[2] : "";
+                String down_method = titleLength >= 4 ? title[3] : "";
+                String name = titleLength >= 5 ? title[4] : "";
+                String size = titleLength >= 6 ? title[5] : "";
+                String subtitles = titleLength >= 7 ? title[6] : "";
+                String sharpness = titleLength >= 8 ? title[7] : "";
+                String desc = titleLength >= 9 ? title[8] : "";
+
                 data.put("year",title[0]);
                 data.put("area",title[1]);
-                data.put("type",title[2]);
-                data.put("down_method",title[3]);
-                data.put("name",title[4]);
-                data.put("size",title[5]);
-                data.put("subtitles",title[6]);
-                data.put("sharpness",title[7]);
+                data.put("type",type);
+                data.put("down_method",down_method);
+                data.put("name",name);
+                data.put("size",size);
+                data.put("subtitles",subtitles);
+                data.put("sharpness",sharpness);
                 data.put("desc",desc);
                 data.put("content",content);
                 data.put("down_url",realDownUrl);

@@ -50,6 +50,9 @@ public class AppConfig{
     public @Bean BaseDictDao dianyingIdDao(){
         return new BaseDictDao(pool, "dianying_id");
     }
+    public @Bean BaseDictDao fakeUserDao(){
+        return new BaseDictDao(pool, "fake_user");
+    }
 
     //工具类
     public @Bean OkHttpUtils okHttpUtils(){
