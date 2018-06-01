@@ -27,7 +27,7 @@ public class commonTask {
     private Dianyingcontent dianyingcontent;
 
 
-	@Scheduled(cron="0 17 23 * * ? ")
+	@Scheduled(cron="0 45 9 * * ? ")
     private void getFilmId(){
         logger.info("getFilmId start......");
         dianyingId.process();
