@@ -151,9 +151,10 @@ public class DianyingId implements IService {
             data.put("head_img", url);
             if(!StringUtils.isEmpty(name) && !StringUtils.isEmpty(url)){
                 int result  = fakeUserDao.insert(data);
-                String isSuccess = result > 1 ? "成功" : "失败";
-                logger.info("insert user " + isSuccess);
-
+                if(result > 0){
+                    String isSuccess = result > 1 ? "成功" : "失败";
+                    logger.info("insert user " + isSuccess);
+                }
             }
         });
         return 1;
